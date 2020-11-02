@@ -3,6 +3,7 @@ module goPjt
 go 1.13
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-xorm/xorm v0.7.9
 	github.com/joho/godotenv v1.3.0
