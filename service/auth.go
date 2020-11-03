@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+type TokenService struct {}
+
 type Auth struct {
 	UserId int64
 	UserType int64
@@ -26,7 +28,7 @@ const (
 	lifetime =  30 * time.Minute
 )
 
-func Generate(user *model.User, now time.Time) (string, error){
+func (TokenService) Generate(user *model.User, now time.Time) (string, error){
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		userIDKey: user.Id,
 		userType: user.Type,
@@ -36,7 +38,7 @@ func Generate(user *model.User, now time.Time) (string, error){
 	return token.SignedString([]byte(secret))
 }
 
-func Verify(c *gin.Context) (*Auth){
+func (TokenService) Verify(c *gin.Context) (*Auth){
 	authHeader := c.Request.Header["Authorization"][0]
 	bearerToken := strings.Split(authHeader, " ")
 	if len(bearerToken) == 2{
@@ -48,32 +50,32 @@ func Verify(c *gin.Context) (*Auth){
 			return []byte(secret), nil
 		})
 		if err != nil {
-			apiErr := utils.NewBadRequestError("failed token parse")
+			apiErr := utils.NewBadRequestError(errors.New("failed token parse"))
 			c.JSON(apiErr.Status, apiErr)
 			return nil
 		}
 		if token.Valid {
 			claims, ok := token.Claims.(jwt.MapClaims)
 			if !ok {
-				apiErr := utils.NewBadRequestError(fmt.Sprintf("not found claims in %s", authToken))
+				apiErr := utils.NewBadRequestError(fmt.Errorf("not found claims in %s", authToken))
 				c.JSON(apiErr.Status, apiErr)
 				return nil
 			}
 			userId, ok := claims[userIDKey].(float64)
 			if !ok {
-				apiErr := utils.NewBadRequestError(fmt.Sprintf("not found %s in %s", userIDKey, authToken))
+				apiErr := utils.NewBadRequestError(fmt.Errorf("not found %s in %s", userIDKey, authToken))
 				c.JSON(apiErr.Status, apiErr)
 				return nil
 			}
 			userType, ok := claims[userType].(float64)
 			if !ok {
-				apiErr := utils.NewBadRequestError(fmt.Sprintf("not found %s in %s", userType, authToken))
+				apiErr := utils.NewBadRequestError(fmt.Errorf("not found %s in %s", userType, authToken))
 				c.JSON(apiErr.Status, apiErr)
 				return nil
 			}
 			iat, ok := claims[iatKey].(float64)
 			if !ok {
-				apiErr := utils.NewBadRequestError(fmt.Sprintf("not found %s in %s", iatKey, authToken))
+				apiErr := utils.NewBadRequestError(fmt.Errorf("not found %s in %s", iatKey, authToken))
 				c.JSON(apiErr.Status, apiErr)
 				return nil
 			}
@@ -83,12 +85,12 @@ func Verify(c *gin.Context) (*Auth){
 				Iat: int64(iat),
 			}
 		} else {
-			apiErr := utils.NewBadRequestError("failed token valid")
+			apiErr := utils.NewBadRequestError(errors.New("failed token valid"))
 			c.JSON(apiErr.Status, apiErr)
 			return nil
 		}
 	} else {
-		apiErr := utils.NewBadRequestError("invalid token")
+		apiErr := utils.NewBadRequestError(errors.New("invalid token"))
 		c.JSON(apiErr.Status, apiErr)
 		return nil
 	}

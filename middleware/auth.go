@@ -8,8 +8,8 @@ import (
 
 func IsLogin() gin.HandlerFunc{
 	return func(c *gin.Context){
-		res := service.Verify(c)
-
+		tokenService := service.TokenService{}
+		res := tokenService.Verify(c)
 		if res == nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": "ng",
@@ -22,7 +22,8 @@ func IsLogin() gin.HandlerFunc{
 
 func IsAdmin() gin.HandlerFunc{
 	return func(c *gin.Context){
-		res := service.Verify(c)
+		tokenService := service.TokenService{}
+		res := tokenService.Verify(c)
 
 		if res == nil {
 			c.JSON(http.StatusUnauthorized, gin.H{

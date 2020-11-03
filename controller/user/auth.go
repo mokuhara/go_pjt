@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"goPjt/model"
 	"goPjt/repository"
@@ -64,20 +65,21 @@ func createToken(user *model.User, c *gin.Context) string{
 	userRepository := repository.UserRepository{}
 	matchUser, err := userRepository.Get(user.Email)
 	if err != nil{
-		apiErr := utils.NewBadRequestError("don't get user")
+		apiErr := utils.NewBadRequestError(fmt.Errorf("don't get user"))
 		c.JSON(apiErr.Status, apiErr)
 		return ""
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(matchUser.Password), []byte(user.Password))
 	if err != nil {
-		apiErr := utils.NewBadRequestError("invalid password")
+		apiErr := utils.NewBadRequestError(fmt.Errorf("invalid password"))
 		c.JSON(apiErr.Status, apiErr)
 		return ""
 	}
-	token, err := service.Generate(matchUser, time.Now())
+	tokenService := service.TokenService{}
+	token, err := tokenService.Generate(matchUser, time.Now())
 	if err != nil{
-		apiErr := utils.NewBadRequestError("failed create token")
+		apiErr := utils.NewBadRequestError(fmt.Errorf("failed create token"))
 		c.JSON(apiErr.Status, apiErr)
 		return ""
 	}

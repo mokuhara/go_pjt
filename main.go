@@ -29,7 +29,13 @@ func main (){
 		adminEngine := APIEngine.Group("/admin")
 		adminEngine.Use(middleware.IsAdmin())
 		{
-			adminEngine.GET("/users", admin.GetUsers)
+			userEngine := adminEngine.Group("/user")
+			{
+				userEngine.GET("/index", admin.GetUsers)
+				userEngine.PUT("/update", admin.UpdateUser)
+				userEngine.DELETE("/delete", admin.DeleteUser)
+				userEngine.POST("/create", admin.CreateUser)
+			}
 		}
 
 	}
