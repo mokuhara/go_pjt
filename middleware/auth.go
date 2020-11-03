@@ -8,15 +8,32 @@ import (
 
 func IsLogin() gin.HandlerFunc{
 	return func(c *gin.Context){
-		res, err := service.Verify(c)
-		if err != nil{
-			c.String(http.StatusUnauthorized, "verify token error")
-		}
+		res := service.Verify(c)
 
-		if res != "ok" {
+		if res == nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": "ng",
 				"data": "invalid token",
+			})
+			c.Abort()
+		}
+	}
+}
+
+func IsAdmin() gin.HandlerFunc{
+	return func(c *gin.Context){
+		res := service.Verify(c)
+
+		if res == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status": "ng",
+				"data": "invalid token",
+			})
+			c.Abort()
+		} else if res.UserType != 0 {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status": "ng",
+				"data": "insufficient authority",
 			})
 			c.Abort()
 		}
