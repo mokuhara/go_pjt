@@ -52,12 +52,20 @@ func CreateProfile(c *gin.Context){
 func UpdateProfile(c *gin.Context){
 	profile := model.Profile{}
 	err := c.BindJSON(&profile)
+
 	if err != nil {
 		apiErr := utils.NewBadRequestError(err)
 		c.JSON(apiErr.Status, apiErr)
 		return
 	}
 	profileRepository := repository.ProfileRepository{}
+	getProfile, err := profileRepository.Get(profile.UserId)
+	if err != nil{
+		apiErr := utils.NewInternalServerError(err)
+		c.JSON(apiErr.Status, apiErr)
+		return
+	}
+	profile.Id = getProfile.Id
 	err = profileRepository.Update(&profile)
 	if err != nil {
 		apiErr := utils.NewInternalServerError(err)

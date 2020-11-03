@@ -21,14 +21,18 @@ func main (){
 			//frontでtoken保存しているcookie消すでlogoutできるのでコメントアウト
 			//auth.GET("/logout", user.Logout)
 		}
+		specialistEngine := APIEngine.Group("/specialist")
+		{
+			specialistEngine.GET("/")
+		}
 		myPageEngine := APIEngine.Group("/mypage/:id")
 		myPageEngine.Use(middleware.IsLogin())
 		{
 			myPageEngine.GET("/", mypage.LoginTest)
-			myPageUserEngine := APIEngine.Group("/user")
+			myPageUserEngine := myPageEngine.Group("/user")
 			{
 				myPageUserEngine.GET("/", mypage.GetProfile)
-				myPageUserEngine.GET("/create", mypage.CreateProfile)
+				myPageUserEngine.POST("/create", mypage.CreateProfile)
 				myPageUserEngine.PUT("/update", mypage.UpdateProfile)
 				myPageUserEngine.DELETE("/delete", mypage.DeleteProfile)
 			}
@@ -45,7 +49,6 @@ func main (){
 				userEngine.POST("/create", admin.CreateUser)
 			}
 		}
-
 	}
 	engine.Run(":3000")
 }

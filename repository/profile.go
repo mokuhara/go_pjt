@@ -16,7 +16,7 @@ func (ProfileRepository) Create(profile *model.Profile) error {
 
 func (ProfileRepository) Get(userId int64) (*model.Profile, error) {
 	profile := model.Profile{}
-	has, err := DbEngine.Where("user_id = ?", userId).Desc("updated_at").Get(&profile)
+	has, err := DbEngine.Where("user_id = ?", userId).Desc("id").Get(&profile)
 	if err != nil{
 		return nil, err
 	}
@@ -44,4 +44,13 @@ func (ProfileRepository) Delete(id int64) error {
 		return err
 	}
 	return nil
+}
+
+func (ProfileRepository) GetAll() ([]model.Profile, error) {
+	profiles := make([]model.Profile, 0)
+	err := DbEngine.Asc("id").Find(&profiles)
+	if err != nil {
+		return nil, err
+	}
+	return profiles, nil
 }
