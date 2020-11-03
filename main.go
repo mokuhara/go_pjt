@@ -21,10 +21,18 @@ func main (){
 			//frontでtoken保存しているcookie消すでlogoutできるのでコメントアウト
 			//auth.GET("/logout", user.Logout)
 		}
-		myPageEngine := APIEngine.Group("/mypage")
+		myPageEngine := APIEngine.Group("/mypage/:id")
 		myPageEngine.Use(middleware.IsLogin())
 		{
 			myPageEngine.GET("/", mypage.LoginTest)
+			myPageUserEngine := APIEngine.Group("/user")
+			{
+				myPageUserEngine.GET("/")
+				myPageUserEngine.GET("/create")
+				myPageUserEngine.PUT("/update")
+				myPageUserEngine.DELETE("/delete")
+			}
+
 		}
 		adminEngine := APIEngine.Group("/admin")
 		adminEngine.Use(middleware.IsAdmin())

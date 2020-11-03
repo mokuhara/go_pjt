@@ -1,32 +1,34 @@
 package utils
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 type ApiErr struct {
-	Message error `json:"message"`
 	Status  int    `json:"status"`
 	Error   string `json:"error"`
 }
 
 func NewBadRequestError(message error) *ApiErr {
+	log.Println(message)
 	return &ApiErr{
-		Message: message,
 		Status:  http.StatusBadRequest,
 		Error:   "bad_request",
 	}
 }
 
 func NewInternalServerError(message error) *ApiErr {
+	log.Println(message)
 	return &ApiErr{
-		Message: message,
 		Status:  http.StatusInternalServerError,
 		Error:   "internal_server_error",
 	}
 }
 
 func NewUnauthorizedError(message error) *ApiErr {
+	log.Println(message)
 	return &ApiErr{
-		Message: message,
 		Status:  http.StatusUnauthorized,
 		Error:   "unauthorized",
 	}

@@ -39,7 +39,7 @@ func (UserRepository) GetAll() ([]model.User, error) {
 
 func (UserRepository) Update(editUser *model.User) error {
 	//なぜかUpdateが効かない、謎
-	affected, err := DbEngine.ID(editUser.Id).Cols("type").Update(editUser)
+	affected, err := DbEngine.ID(editUser.Id).Cols("type").Update(editUser.Type)
 	if affected == 0 {
 		return fmt.Errorf("can't update id: %d, editUser: %v", editUser.Id, *editUser)
 	}
