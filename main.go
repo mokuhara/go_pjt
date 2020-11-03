@@ -27,10 +27,10 @@ func main (){
 			myPageEngine.GET("/", mypage.LoginTest)
 			myPageUserEngine := APIEngine.Group("/user")
 			{
-				myPageUserEngine.GET("/")
-				myPageUserEngine.GET("/create")
-				myPageUserEngine.PUT("/update")
-				myPageUserEngine.DELETE("/delete")
+				myPageUserEngine.GET("/", mypage.GetProfile)
+				myPageUserEngine.GET("/create", mypage.CreateProfile)
+				myPageUserEngine.PUT("/update", mypage.UpdateProfile)
+				myPageUserEngine.DELETE("/delete", mypage.DeleteProfile)
 			}
 
 		}
