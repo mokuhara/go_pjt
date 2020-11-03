@@ -46,11 +46,20 @@ func (ProfileRepository) Delete(id int64) error {
 	return nil
 }
 
-func (ProfileRepository) GetAll() ([]model.Profile, error) {
-	profiles := make([]model.Profile, 0)
-	err := DbEngine.Asc("id").Find(&profiles)
+func (ProfileRepository) GetAll() ([]map[string]string, error) {
+	//profiles := make([]model.Profile, 0)
+	//err := DbEngine.Asc("id").Find(&profiles)
+	result, err := DbEngine.Query("SELECT * FROM (SELECT *, rank() over(partition by user_id order by id desc) AS rank FROM \"public\".\"profile\" LIMIT 100 ) AS a WHERE rank = 1")
 	if err != nil {
 		return nil, err
 	}
-	return profiles, nil
+	var arr []map[string]string
+	for _, s := range result {
+		raw := make(map[string]string, 0)
+		for k, v := range s {
+			raw[k] = string(v)
+		}
+		arr = append(arr, raw)
+	}
+	return arr, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"goPjt/controller/mypage"
+	"goPjt/controller/specialist"
 	"goPjt/controller/user"
 	"goPjt/controller/admin"
 	"goPjt/middleware"
@@ -23,7 +24,7 @@ func main (){
 		}
 		specialistEngine := APIEngine.Group("/specialist")
 		{
-			specialistEngine.GET("/")
+			specialistEngine.GET("/", specialist.GetAllProfile)
 		}
 		myPageEngine := APIEngine.Group("/mypage/:id")
 		myPageEngine.Use(middleware.IsLogin())
