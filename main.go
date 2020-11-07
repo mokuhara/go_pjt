@@ -2,10 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"goPjt/controller/admin"
+	"goPjt/controller/check"
 	"goPjt/controller/mypage"
 	"goPjt/controller/specialist"
 	"goPjt/controller/user"
-	"goPjt/controller/admin"
 	"goPjt/middleware"
 )
 
@@ -49,6 +50,10 @@ func main (){
 				userEngine.DELETE("/delete", admin.DeleteUser)
 				userEngine.POST("/create", admin.CreateUser)
 			}
+		}
+		checkEngine := APIEngine.Group("/check")
+		{
+			checkEngine.GET("/signup", check.SignUp)
 		}
 	}
 	engine.Run(":3000")
